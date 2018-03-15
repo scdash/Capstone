@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-//[InitializeOnLoad]
+[InitializeOnLoad]
 public class ActionEditor : EditorWindow {
     string string1 = "Insert Here";
     bool groupEnabled;
