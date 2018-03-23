@@ -20,7 +20,10 @@ public class BruteController : MonoBehaviour {
         } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
             anim.SetTrigger("isBack");
         }
-        var x = Input.GetAxis("Horizontal") * Time.deltaTime * 5.0f;
-        transform.Translate(0, 0, x);
+        if(Input.GetKeyUp(KeyCode.RightArrow)) {
+            anim.SetTrigger("stopFore");
+        } else if (Input.GetKeyUp(KeyCode.LeftArrow)){
+            anim.SetTrigger("stopBack");
+        }
     }
 }
