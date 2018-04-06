@@ -55,6 +55,8 @@ public class ActionEditor : EditorWindow {
 
         AnimatorState idleState = controller.layers[0].stateMachine.AddState("Idle");
         idleState.motion = idleAnim;
+        //AnimatorState jumpState = controller.layers[1].stateMachine.AddState("Jump");
+        //jumpState.motion = jumpAnim;
 
         BlendTree blendTree1;
         BlendTree blendTree2;
@@ -74,6 +76,8 @@ public class ActionEditor : EditorWindow {
         AnimatorStateTransition leaveMFore = moveState1.AddTransition(idleState);
         AnimatorStateTransition leaveIBack = idleState.AddTransition(moveState2);
         AnimatorStateTransition leaveMBack = moveState2.AddTransition(idleState);
+        //AnimatorStateTransition jumpUp = idleState.AddTransition(jumpState);
+        //AnimatorStateTransition jumpDown = jumpState.AddTransition(idleState);
 
         leaveIFore.AddCondition(AnimatorConditionMode.Greater, 0.01f, "Speed");
         leaveMFore.AddCondition(AnimatorConditionMode.Less, 0.01f, "Speed");
