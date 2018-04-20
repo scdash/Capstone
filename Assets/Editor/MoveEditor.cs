@@ -13,7 +13,7 @@ public class ActionEditor : EditorWindow {
     public AnimationClip jumpAnim;
     public AnimationClip moveAnim;
     public string moveName;
-    public float moveWeight = 5.00f;
+    public int moveWeight = 5;
 
     [MenuItem("Window/Action Editor")]
     static void OpenWindow() {
@@ -31,7 +31,7 @@ public class ActionEditor : EditorWindow {
         runBack = EditorGUILayout.ObjectField("Backward Run", runBack, typeof(AnimationClip), false) as AnimationClip;
         jumpAnim = EditorGUILayout.ObjectField("Vertical Jump", jumpAnim, typeof(AnimationClip), false) as AnimationClip;
         
-        if (GUILayout.Button("Build")) {
+        if (GUILayout.Button("Build", GUILayout.MaxWidth(150f))) {
             if (targetM == null){
                 Debug.LogError("Needs a base to animate");
                 return;
@@ -43,7 +43,15 @@ public class ActionEditor : EditorWindow {
         GUILayout.Label("Add Move", EditorStyles.boldLabel);
         moveName = EditorGUILayout.TextField("Action ID", "Move Name");
         moveAnim = EditorGUILayout.ObjectField("Action Animation", moveAnim, typeof(AnimationClip), true) as AnimationClip;
-        moveWeight = EditorGUILayout.Slider("Action Weight", moveWeight, 0, 10);
+        moveWeight = EditorGUILayout.IntSlider("Action Weight", moveWeight, 0, 10);
+
+        if (GUILayout.Button("Add", GUILayout.MaxWidth(150f))) {
+            if (moveName.Equals("Move Name")) {
+                Debug.LogError("Please add an appropriate name");
+                return;
+            }
+            Debug.Log("Move Made");
+        }
 
         GUILayout.Label("Delete Move", EditorStyles.boldLabel);
     }
@@ -51,17 +59,20 @@ public class ActionEditor : EditorWindow {
     void Build()
     {
         AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath("Assets/Scripts/" + targetM.name + ".controller");
+
         controller.AddParameter("Speed", AnimatorControllerParameterType.Float);
+        controller.AddParameter("IsJump", AnimatorControllerParameterType.Trigger);
 
-        AnimatorState idleState = controller.layers[0].stateMachine.AddState("Idle");
-        idleState.motion = idleAnim;
-        //AnimatorState jumpState = controller.layers[1].stateMachine.AddState("Jump");
-        //jumpState.motion = jumpAnim;
-
+        var rootMachine = controller.layers[0].stateMachine;
         BlendTree blendTree1;
         BlendTree blendTree2;
+
+        AnimatorState idleState = rootMachine.AddState("Idle");
+        AnimatorState jumpState = rootMachine.AddState("Jump");
         AnimatorState moveState1 = controller.CreateBlendTreeInController("Move Forward", out blendTree1);
         AnimatorState moveState2 = controller.CreateBlendTreeInController("Move Backward", out blendTree2);
+        idleState.motion = idleAnim;
+        jumpState.motion = jumpAnim;
 
         blendTree1.blendType = BlendTreeType.Simple1D;
         blendTree2.blendType = BlendTreeType.Simple1D;
@@ -76,15 +87,21 @@ public class ActionEditor : EditorWindow {
         AnimatorStateTransition leaveMFore = moveState1.AddTransition(idleState);
         AnimatorStateTransition leaveIBack = idleState.AddTransition(moveState2);
         AnimatorStateTransition leaveMBack = moveState2.AddTransition(idleState);
-        //AnimatorStateTransition jumpUp = idleState.AddTransition(jumpState);
-        //AnimatorStateTransition jumpDown = jumpState.AddTransition(idleState);
+        AnimatorStateTransition jumpUp = idleState.AddTransition(jumpState);
+        AnimatorStateTransition jumpDown = jumpState.AddTransition(idleState, true);
 
         leaveIFore.AddCondition(AnimatorConditionMode.Greater, 0.01f, "Speed");
         leaveMFore.AddCondition(AnimatorConditionMode.Less, 0.01f, "Speed");
         leaveIBack.AddCondition(AnimatorConditionMode.Less, -0.01f, "Speed");
         leaveMBack.AddCondition(AnimatorConditionMode.Greater, -0.01f, "Speed");
+        jumpUp.AddCondition(AnimatorConditionMode.If, 0, "IsJump");
 
         targetM.GetComponent<Animator>().runtimeAnimatorController = controller;
     }
+    /**
+    void add {
+        foo;
+    }
+    **/
 }
 #endif
