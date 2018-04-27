@@ -13,7 +13,7 @@ public class BruteController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(Input.GetButtonDown("Jump")) {
+        if (Input.GetButtonDown("Jump")) {
             anim.SetTrigger("isJumping");
         } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
             anim.SetTrigger("isFore");
