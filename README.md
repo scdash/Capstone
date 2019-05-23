@@ -1,9 +1,9 @@
-# BS Capstone (title pending)
+# BS Capstone - Action Editor
 
 [Blog][blog]
 
 ## What is this?
-This is a basic fighting game designed in [Unity3D][unity] for the purpose of learning to design an AI in C#.
+This is a fighting game AI editing software designed for [Unity3D][unity] for the purpose of both learning how certain types of AI work and how  to manipulate C# script and the Unity dashboard through another dashboard element.
 It is currently in development, and will be updated occasionally after completion.
 
 ## Contributions:
